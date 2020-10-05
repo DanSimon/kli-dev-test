@@ -1,0 +1,38 @@
+job_name: my-test-job
+pipeline_options:
+  streaming: True
+  update: False
+  worker_harness_container_image: gcr.io/not-real-project/my-test-job-worker
+  experiments:
+    - beam_fn_api
+  project: not-real-project
+  region: europe-west1
+  staging_location: gs://not-real-project-dataflow-tmp/my-test-job/staging
+  temp_location: gs://not-real-project-dataflow-tmp/my-test-job/temp
+  num_workers: 2
+  max_num_workers: 2
+  autoscaling_algorithm: NONE
+  disk_size_gb: 32
+  worker_machine_type: n1-standard-2
+  runner: DataflowRunner
+job_config:
+  allow_non_klio_messages: False
+  events:
+    inputs:
+      - type: pubsub
+        topic: projects/not-real-project/topics/my-test-job-input
+        subscription: projects/not-real-project/subscriptions/my-test-job-input-my-test-job
+    outputs:
+      - type: pubsub
+        topic: projects/not-real-project/topics/my-test-job-output
+  data:
+    inputs:
+      - type: gcs
+        location: gs://not-real-project-input/my-test-job
+        # Remove/set to false when job is ready to process input existence checks
+        skip_klio_existence_check: True
+    outputs:
+      - type: gcs
+        location: gs://not-real-project-output/my-test-job
+        # Remove/set to false when job is ready to process output existence checks
+        skip_klio_existence_check: True
